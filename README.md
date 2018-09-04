@@ -86,15 +86,7 @@ are treated as relative **to the current working directory**, not `file`.  If
 you pass a function, it is called with a `ReplacementOptions` object containing
 the following properties, and may return a `string` replacement module name.
 
-#### `moduleName: string`
-
-The module name in an `import/require` statement to replace.  It may differ from
+* `moduleName: string`: The module name in an `import/require` statement to replace.  It may differ from
 `find` if it is a relative path from a different directory to the same file.
-
-#### `file: string`
-
-The `file` you passed to `replaceSources`.
-
-#### `path: NodePath`
-
-The `babel` `NodePath` for the `import` or `require` statement.
+* `file: string`: The `file` you passed to `replaceSources`.
+* `path: NodePath`: The `babel` `NodePath` for the `import` or `require` statement.
