@@ -21,6 +21,10 @@ The correct relative path will be used in each replacement, relative to the file
 being processed.  It will work just as well if you swap the `--find` and
 `--replace` values, restoring the original module names.
 
+## Requirements
+
+* Node 8 or greater
+
 ## `require`s it's not magic enough to handle
 * scopes where `require` is redeclared, e.g. requires inside a
   `function (require) { ... }` will be ignored, if you're doing that,
