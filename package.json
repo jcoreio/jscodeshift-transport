@@ -1,7 +1,7 @@
 {
-  "name": "untranspiled-js-library-skeleton",
-  "version": "1.0.0",
-  "description": "my skeleton for transpiler-free JS packages",
+  "name": "jscodeshift-transport",
+  "version": "0.0.0-development",
+  "description": "jscodeshift transform and API for changing import source paths",
   "main": "index.js",
   "author": "Andy Edwards",
   "license": "MIT",
@@ -39,15 +39,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jedwards1211/untranspiled-js-library-skeleton.git"
+    "url": "https://github.com/jcoreio/jscodeshift-transport.git"
   },
   "keywords": [
     "skeleton"
   ],
   "bugs": {
-    "url": "https://github.com/jedwards1211/untranspiled-js-library-skeleton/issues"
+    "url": "https://github.com/jcoreio/jscodeshift-transport/issues"
   },
-  "homepage": "https://github.com/jedwards1211/untranspiled-js-library-skeleton#readme",
+  "homepage": "https://github.com/jcoreio/jscodeshift-transport#readme",
   "devDependencies": {
     "@commitlint/cli": "^6.0.2",
     "@commitlint/config-conventional": "^6.0.2",
