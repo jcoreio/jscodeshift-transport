@@ -5,10 +5,11 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-Great jscodeshift transform and API for changing import source paths.
-It handles both relative imports/requires and imports/requires from
-`node_modules`.  For instance, it's easy to replace a component from a library
-with your own wrapper in a local file:
+A great jscodeshift transform and API for finding and replacing module names in
+import/require statements.  I wrote this because other transforms I found seemed
+not as convenient or comprehensive.  This handles both relative imports/requires
+and imports/requires from `node_modules`.  For instance, it's easy to replace a
+component from a library with your own wrapper in a local file:
 
 ```sh
 jscodeshift -t ~/jscodeshift-transport ./src \
@@ -25,7 +26,7 @@ being processed.
   *please stahp*
 * computed require paths (any argument besides a string literal)
 
-## CLI usage
+## CLI
 
 Run `index.js` in this repo with `jscodeshift` and pass two options to it:
 
