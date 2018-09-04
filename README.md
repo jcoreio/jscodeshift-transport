@@ -18,7 +18,8 @@ jscodeshift -t ~/jscodeshift-transport ./src \
 ```
 
 The correct relative path will be used in each replacement, relative to the file
-being processed.
+being processed.  It will work just as well if you swap the `--find` and
+`--replace` values, restoring the original module names.
 
 ## `require`s it's not magic enough to handle
 * scopes where `require` is redeclared, e.g. requires inside a
