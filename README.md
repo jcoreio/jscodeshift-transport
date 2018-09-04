@@ -54,8 +54,14 @@ jscodeshift -t ~/jscodeshift-transport ./src \
 
 ## API
 
-`jscodeshift-transport` exports a `replaceSources` function you can use in your
-own jscodeshift transforms.  It accepts the following arguments:
+`jscodeshift-transport` exports a `replaceModuleNames` function you can use in your
+own jscodeshift transforms.
+
+```js
+const {replaceModuleNames} = require('jscodeshift-transport')
+```
+
+It accepts the following arguments:
 
 ### `file: string`
 
