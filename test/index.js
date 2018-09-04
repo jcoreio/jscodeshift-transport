@@ -1,6 +1,6 @@
 const {expect} = require('chai')
 const j = require('jscodeshift').withParser('babylon')
-const {replaceSources} = require('..')
+const {replaceModuleNames} = require('..')
 const {spawn} = require('promisify-child-process')
 const fs = require('fs-extra')
 const path = require('path')
@@ -16,6 +16,10 @@ const baz = require('./baz')
 
 import qux from '../qux'
 const qux = require('../qux')
+
+function shouldBeUnchanged(require) {
+  return require('foo')
+}
 `
 
 const expected = `
@@ -27,17 +31,21 @@ const baz = require("baz")
 
 import qux from "../QUX"
 const qux = require("../QUX")
+
+function shouldBeUnchanged(require) {
+  return require('foo')
+}
 `
 
-describe(`replaceSources`, function () {
+describe(`replaceModuleNames`, function () {
   it(`works`, function () {
     const root = j(code)
 
     const file = path.resolve(__dirname, '../temp.js')
 
-    replaceSources(file, root, 'foo', './foo')
-    replaceSources(file, root, '../baz', 'baz')
-    replaceSources(file, root, '../../qux', ({source}) => source.toUpperCase())
+    replaceModuleNames(file, root, 'foo', './foo')
+    replaceModuleNames(file, root, '../baz', 'baz')
+    replaceModuleNames(file, root, '../../qux', ({moduleName}) => moduleName.toUpperCase())
 
     expect(root.toSource()).to.equal(expected)
   })
@@ -49,19 +57,19 @@ describe(`integration test`, async function () {
   after(() => fs.remove('../temp.js'))
   it(`works`, async function () {
     await spawn('jscodeshift', [
-      '-t', '../index.js',
+      '-t', '..',
       '../temp.js',
       '--find=foo',
       '--replace=./foo',
     ], {stdio: 'inherit'})
     await spawn('jscodeshift', [
-      '-t', '../index.js',
+      '-t', '..',
       '../temp.js',
       '--find=../baz',
       '--replace=baz',
     ], {stdio: 'inherit'})
     await spawn('jscodeshift', [
-      '-t', '../index.js',
+      '-t', '..',
       '../temp.js',
       '--find=../../qux',
       '--replace=../../QUX',
