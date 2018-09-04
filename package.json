@@ -1,8 +1,7 @@
 {
   "name": "jscodeshift-transport",
   "version": "0.0.0-development",
-  "description": "jscodeshift transform and API for finding and replacing module names in
-  import/require statements",
+  "description": "jscodeshift transform and API for finding and replacing module names in import/require statements",
   "main": "index.js",
   "author": "Andy Edwards",
   "license": "MIT",
@@ -45,12 +44,13 @@
   "keywords": [
     "find-and-replace",
     "import",
-    "import-statement",
+    "import-statements",
     "jscodeshift",
     "module-name",
+    "refactoring",
     "replace",
     "require",
-    "require-statement"
+    "require-statements"
   ],
   "bugs": {
     "url": "https://github.com/jcoreio/jscodeshift-transport/issues"
