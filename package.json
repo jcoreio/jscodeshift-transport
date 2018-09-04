@@ -1,7 +1,8 @@
 {
   "name": "jscodeshift-transport",
   "version": "0.0.0-development",
-  "description": "jscodeshift transform and API for changing import source paths",
+  "description": "jscodeshift transform and API for finding and replacing module names in
+  import/require statements",
   "main": "index.js",
   "author": "Andy Edwards",
   "license": "MIT",
