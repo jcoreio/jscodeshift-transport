@@ -42,7 +42,14 @@
     "url": "https://github.com/jcoreio/jscodeshift-transport.git"
   },
   "keywords": [
-    "skeleton"
+    "find-and-replace",
+    "import",
+    "import-statement",
+    "jscodeshift",
+    "module-name",
+    "replace",
+    "require",
+    "require-statement"
   ],
   "bugs": {
     "url": "https://github.com/jcoreio/jscodeshift-transport/issues"
