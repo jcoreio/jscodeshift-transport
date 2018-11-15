@@ -55,15 +55,14 @@ describe(`replaceModuleNames`, function() {
 
     expect(root.toSource()).to.equal(expected)
   })
-})
-it(`find function works`, function() {
-  const root = j(code)
+  it(`find function works`, function() {
+    const root = j(code)
 
-  const file = path.resolve(__dirname, '../temp.js')
+    const file = path.resolve(__dirname, '../temp.js')
 
-  replaceModuleNames(file, root, s => /foo|baz/.test(s), s => s.toUpperCase())
+    replaceModuleNames(file, root, s => /foo|baz/.test(s), s => s.toUpperCase())
 
-  expect(root.toSource()).to.equal(`
+    expect(root.toSource()).to.equal(`
 import foo from "FOO"
 const foo = require("FOO")
 import("FOO")
@@ -80,15 +79,15 @@ function shouldBeUnchanged(require) {
   return require('foo')
 }
 `)
-})
-it(`find regex works`, function() {
-  const root = j(code)
+  })
+  it(`find regex works`, function() {
+    const root = j(code)
 
-  const file = path.resolve(__dirname, '../temp.js')
+    const file = path.resolve(__dirname, '../temp.js')
 
-  replaceModuleNames(file, root, /foo|baz/, s => s.toUpperCase())
+    replaceModuleNames(file, root, /foo|baz/, s => s.toUpperCase())
 
-  expect(root.toSource()).to.equal(`
+    expect(root.toSource()).to.equal(`
 import foo from "FOO"
 const foo = require("FOO")
 import("FOO")
@@ -105,6 +104,7 @@ function shouldBeUnchanged(require) {
   return require('foo')
 }
 `)
+  })
 })
 describe(`integration test`, async function() {
   this.timeout(30000)
