@@ -93,9 +93,7 @@ it(`find regex works`, function() {
 
   const file = path.resolve(__dirname, '../temp.js')
 
-  replaceModuleNames(file, root, /foo|baz/, ({ moduleName }) =>
-    moduleName.toUpperCase()
-  )
+  replaceModuleNames(file, root, /foo|baz/, s => s.toUpperCase())
 
   expect(root.toSource()).to.equal(`
 import foo from "FOO"

@@ -82,10 +82,8 @@ function replaceModuleNames(file, root, find, replace) {
   if (find instanceof RegExp) {
     const regexp = find
     find = s => regexp.test(s)
-    if (typeof replace === 'string') {
-      const replacement = replace
-      replace = ({ moduleName }) => moduleName.replace(regexp, replacement)
-    }
+    const replacement = replace
+    replace = ({ moduleName }) => moduleName.replace(regexp, replacement)
   }
   if (typeof replace === 'string') {
     const target =
