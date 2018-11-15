@@ -58,11 +58,68 @@ describe(`replaceModuleNames`, function() {
     expect(root.toSource()).to.equal(expected)
   })
 })
+it(`find function works`, function() {
+  const root = j(code)
+
+  const file = path.resolve(__dirname, '../temp.js')
+
+  replaceModuleNames(
+    file,
+    root,
+    s => /foo|baz/.test(s),
+    ({ moduleName }) => moduleName.toUpperCase()
+  )
+
+  expect(root.toSource()).to.equal(`
+import foo from "FOO"
+const foo = require("FOO")
+import("FOO")
+
+import baz from "./BAZ"
+const baz = require("./BAZ")
+import("./BAZ")
+
+import qux from '../qux'
+const qux = require('../qux')
+import('../qux')
+
+function shouldBeUnchanged(require) {
+  return require('foo')
+}
+`)
+})
+it(`find regex works`, function() {
+  const root = j(code)
+
+  const file = path.resolve(__dirname, '../temp.js')
+
+  replaceModuleNames(file, root, /foo|baz/, ({ moduleName }) =>
+    moduleName.toUpperCase()
+  )
+
+  expect(root.toSource()).to.equal(`
+import foo from "FOO"
+const foo = require("FOO")
+import("FOO")
+
+import baz from "./BAZ"
+const baz = require("./BAZ")
+import("./BAZ")
+
+import qux from '../qux'
+const qux = require('../qux')
+import('../qux')
+
+function shouldBeUnchanged(require) {
+  return require('foo')
+}
+`)
+})
 describe(`integration test`, async function() {
   this.timeout(30000)
 
-  before(() => fs.writeFile('../temp.js', code, 'utf8'))
-  after(() => fs.remove('../temp.js'))
+  beforeEach(() => fs.writeFile('../temp.js', code, 'utf8'))
+  afterEach(() => fs.remove('../temp.js'))
   it(`works`, async function() {
     await spawn(
       'jscodeshift',
@@ -81,5 +138,37 @@ describe(`integration test`, async function() {
     )
     const result = await fs.readFile('../temp.js', 'utf8')
     expect(result).to.equal(expected)
+  })
+  it(`works with --regex option`, async function() {
+    await spawn(
+      'jscodeshift',
+      [
+        '-t',
+        '..',
+        '../temp.js',
+        '--find=(foo|baz)',
+        '--replace=$1glomb',
+        '--regex=1',
+      ],
+      { stdio: 'inherit' }
+    )
+    const result = await fs.readFile('../temp.js', 'utf8')
+    expect(result).to.equal(`
+import foo from "fooglomb"
+const foo = require("fooglomb")
+import("fooglomb")
+
+import baz from "./bazglomb"
+const baz = require("./bazglomb")
+import("./bazglomb")
+
+import qux from '../qux'
+const qux = require('../qux')
+import('../qux')
+
+function shouldBeUnchanged(require) {
+  return require('foo')
+}
+`)
   })
 })

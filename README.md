@@ -7,9 +7,9 @@
 [![npm version](https://badge.fury.io/js/jscodeshift-transport.svg)](https://badge.fury.io/js/jscodeshift-transport)
 
 A great jscodeshift transform and API for finding and replacing module names in
-import/require statements.  I wrote this because other transforms I found seemed
-not as convenient or comprehensive.  This handles both relative imports/requires
-and imports/requires from `node_modules`.  For instance, it's easy to replace a
+import/require statements. I wrote this because other transforms I found seemed
+not as convenient or comprehensive. This handles both relative imports/requires
+and imports/requires from `node_modules`. For instance, it's easy to replace a
 component from a library with your own wrapper in a local file:
 
 ```sh
@@ -19,31 +19,38 @@ jscodeshift -t ~/jscodeshift-transport ./src \
 ```
 
 The correct relative path will be used in each replacement, relative to the file
-being processed.  It will work just as well if you swap the `--find` and
+being processed. It will work just as well if you swap the `--find` and
 `--replace` values, restoring the original module names.
 
 ## Requirements
 
-* Node 8 or greater
+- Node 8 or greater
 
 ## `require`s it's not magic enough to handle
-* scopes where `require` is redeclared, e.g. requires inside a
+
+- scopes where `require` is redeclared, e.g. requires inside a
   `function (require) { ... }` will be ignored, if you're doing that,
-  *please stahp*
-* computed require paths (any argument besides a string literal)
+  _please stahp_
+- computed require paths (any argument besides a string literal)
 
 ## CLI
 
 Run `index.js` in this repo with `jscodeshift` and pass two options to it:
 
-* `--find=<VALUE>`: The module name to find, just like you would use in an
+- `--find=<VALUE>`: The module name to find, just like you would use in an
   `import` or `require` statement, relative to the current working directory:
   Paths to local files must be absolute or begin with ../ or ./; otherwise,
   it is assumed you meant an import from `node_modules`.
-* `--replace=<VALUE>`: The module name to replace it with, just like you would
+- `--replace=<VALUE>`: The module name to replace it with, just like you would
   use in an `import` or `require` statement, relative to the current working directory:
   Paths to local files must be absolute or begin with ../ or ./; otherwise,
   it is assumed you meant an import from `node_modules`.
+
+It's also possible to do regex replacement on module names:
+
+- `--regex=1`: Treat `--find` as a `RegExp` and find module names that match it,
+  and regex replace `--find` with `--replace` on the module names
+- `--flags=<FLAGS>`: Regular expression flags to use for `--regex`
 
 ```sh
 npm i -g jscodeshift
@@ -63,7 +70,7 @@ jscodeshift -t ~/jscodeshift-transport ./src \
 own jscodeshift transforms.
 
 ```js
-const {replaceModuleNames} = require('jscodeshift-transport')
+const { replaceModuleNames } = require('jscodeshift-transport')
 ```
 
 It accepts the following arguments:
@@ -74,24 +81,29 @@ The path to the file being transformed
 
 ### `root: Collection`
 
-The root jscodeshift `Collection` from the source code of `file`.  You must use
+The root jscodeshift `Collection` from the source code of `file`. You must use
 the `babylon` parser (e.g. `require('jscodeshift').withParser('babylon')(code)`)
 
-### `find: string`
+### `find: string | RegExp | (moduleName: string) => boolean`
 
 The module name to find in `import`/`require` statements.
 Paths starting with `./` or `../` are treated as relative
-**to the current working directory**, not `file`.
+**to the current working directory**, not `file`. If a `RegExp` is given, it
+will find all module names that match the `RegExp`. If a function is given, it
+will find all module names for which `find(moduleName)` is truthy.
 
 ### `replace: string | (ReplaceOptions) => ?string`
 
 The module name to replace `find` with in `import`/`require` statements, or a
-function that computes the replacement.  Paths starting with `./` or `../`
-are treated as relative **to the current working directory**, not `file`.  If
+function that computes the replacement. Paths starting with `./` or `../`
+are treated as relative **to the current working directory**, not `file`. If
 you pass a function, it is called with a `ReplacementOptions` object containing
 the following properties, and may return a `string` replacement module name.
 
-* `moduleName: string`: The module name in an `import/require` statement to replace.  It may differ from
-`find` if it is a relative path from a different directory to the same file.
-* `file: string`: The `file` you passed to `replaceSources`.
-* `path: NodePath`: The `babel` `NodePath` for the `import` or `require` statement.
+- `moduleName: string`: The module name in an `import/require` statement to replace. It may differ from
+  `find` if it is a relative path from a different directory to the same file.
+- `file: string`: The `file` you passed to `replaceSources`.
+- `path: NodePath`: The `babel` `NodePath` for the `import` or `require` statement.
+
+If `find` is a `RegExp`, the new module name will be computed as
+`moduleName.replace(find, replace).`
