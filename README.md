@@ -9,8 +9,9 @@
 A great jscodeshift transform and API for finding and replacing module names in
 import/require statements. I wrote this because other transforms I found seemed
 not as convenient or comprehensive. This handles both relative imports/requires
-and imports/requires from `node_modules`. For instance, it's easy to replace a
-component from a library with your own wrapper in a local file:
+and imports/requires from `node_modules`, as well as regex find/replace. For
+instance, it's easy to replace a component from a library with your own wrapper
+in a local file:
 
 ```sh
 jscodeshift -t ~/jscodeshift-transport ./src \
