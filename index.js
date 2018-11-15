@@ -83,7 +83,13 @@ function replaceModuleNames(file, root, find, replace) {
     const regexp = find
     find = s => regexp.test(s)
     const replacement = replace
-    replace = ({ moduleName }) => moduleName.replace(regexp, replacement)
+    replace = (moduleName, info) =>
+      moduleName.replace(
+        regexp,
+        typeof replacement === 'function'
+          ? (...args) => replacement(...args, info)
+          : replacement
+      )
   }
   if (typeof replace === 'string') {
     const target =
@@ -100,14 +106,14 @@ function replaceModuleNames(file, root, find, replace) {
     const {
       source: { value: moduleName },
     } = node
-    const replacement = replace({ file, path: nodePath, moduleName })
+    const replacement = replace(moduleName, { file, path: nodePath })
     if (typeof replacement === 'string') node.source.value = replacement
   }
 
   function processRequireOrAsyncImport(nodePath) {
     const { node } = nodePath
     const [{ value: moduleName }] = node.arguments
-    const replacement = replace({ file, path: nodePath, moduleName })
+    const replacement = replace(moduleName, { file, path: nodePath })
     if (typeof replacement === 'string') node.arguments[0].value = replacement
   }
 

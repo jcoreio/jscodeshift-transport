@@ -92,17 +92,15 @@ Paths starting with `./` or `../` are treated as relative
 will find all module names that match the `RegExp`. If a function is given, it
 will find all module names for which `find(moduleName)` is truthy.
 
-### `replace: string | (ReplaceOptions) => ?string`
+### `replace: string | (moduleName: string, info: Info) => ?string`
 
 The module name to replace `find` with in `import`/`require` statements, or a
 function that computes the replacement. Paths starting with `./` or `../`
 are treated as relative **to the current working directory**, not `file`. If
-you pass a function, it is called with a `ReplacementOptions` object containing
-the following properties, and may return a `string` replacement module name.
+you pass a function, it is called with the `moduleName` and an `info` object
+with the following properties, and may return a `string` replacement module name.
 
-- `moduleName: string`: The module name in an `import/require` statement to replace. It may differ from
-  `find` if it is a relative path from a different directory to the same file.
-- `file: string`: The `file` you passed to `replaceSources`.
+- `file: string`: The `file` you passed to `replaceModuleNames`.
 - `path: NodePath`: The `babel` `NodePath` for the `import` or `require` statement.
 
 If `find` is a `RegExp`, the new module name will be computed as

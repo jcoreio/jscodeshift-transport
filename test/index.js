@@ -51,9 +51,7 @@ describe(`replaceModuleNames`, function() {
 
     replaceModuleNames(file, root, 'foo', './foo')
     replaceModuleNames(file, root, '../baz', 'baz')
-    replaceModuleNames(file, root, '../../qux', ({ moduleName }) =>
-      moduleName.toUpperCase()
-    )
+    replaceModuleNames(file, root, '../../qux', s => s.toUpperCase())
 
     expect(root.toSource()).to.equal(expected)
   })
@@ -63,12 +61,7 @@ it(`find function works`, function() {
 
   const file = path.resolve(__dirname, '../temp.js')
 
-  replaceModuleNames(
-    file,
-    root,
-    s => /foo|baz/.test(s),
-    ({ moduleName }) => moduleName.toUpperCase()
-  )
+  replaceModuleNames(file, root, s => /foo|baz/.test(s), s => s.toUpperCase())
 
   expect(root.toSource()).to.equal(`
 import foo from "FOO"
