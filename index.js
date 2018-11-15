@@ -3,7 +3,7 @@ const path = require('path')
 
 module.exports = function replaceModuleNamesTransform(fileInfo, api, {find, replace}) {
   if (!find) throw new Error('missing find option, pass --find=<VALUE>')
-  if (!replace) throw new Error('missing find option, pass --replace=<VALUE>')
+  if (!replace) throw new Error('missing replace option, pass --replace=<VALUE>')
   const root = api.jscodeshift(fileInfo.source)
   replaceModuleNames(fileInfo.path, root, find, replace)
   return root.toSource()
