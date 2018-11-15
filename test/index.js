@@ -1,7 +1,7 @@
-const {expect} = require('chai')
+const { expect } = require('chai')
 const j = require('jscodeshift').withParser('babylon')
-const {replaceModuleNames} = require('..')
-const {spawn} = require('promisify-child-process')
+const { replaceModuleNames } = require('..')
+const { spawn } = require('promisify-child-process')
 const fs = require('fs-extra')
 const path = require('path')
 
@@ -43,43 +43,42 @@ function shouldBeUnchanged(require) {
 }
 `
 
-describe(`replaceModuleNames`, function () {
-  it(`works`, function () {
+describe(`replaceModuleNames`, function() {
+  it(`works`, function() {
     const root = j(code)
 
     const file = path.resolve(__dirname, '../temp.js')
 
     replaceModuleNames(file, root, 'foo', './foo')
     replaceModuleNames(file, root, '../baz', 'baz')
-    replaceModuleNames(file, root, '../../qux', ({moduleName}) => moduleName.toUpperCase())
+    replaceModuleNames(file, root, '../../qux', ({ moduleName }) =>
+      moduleName.toUpperCase()
+    )
 
     expect(root.toSource()).to.equal(expected)
   })
 })
-describe(`integration test`, async function () {
+describe(`integration test`, async function() {
   this.timeout(30000)
 
   before(() => fs.writeFile('../temp.js', code, 'utf8'))
   after(() => fs.remove('../temp.js'))
-  it(`works`, async function () {
-    await spawn('jscodeshift', [
-      '-t', '..',
-      '../temp.js',
-      '--find=foo',
-      '--replace=./foo',
-    ], {stdio: 'inherit'})
-    await spawn('jscodeshift', [
-      '-t', '..',
-      '../temp.js',
-      '--find=../baz',
-      '--replace=baz',
-    ], {stdio: 'inherit'})
-    await spawn('jscodeshift', [
-      '-t', '..',
-      '../temp.js',
-      '--find=../../qux',
-      '--replace=../../QUX',
-    ], {stdio: 'inherit'})
+  it(`works`, async function() {
+    await spawn(
+      'jscodeshift',
+      ['-t', '..', '../temp.js', '--find=foo', '--replace=./foo'],
+      { stdio: 'inherit' }
+    )
+    await spawn(
+      'jscodeshift',
+      ['-t', '..', '../temp.js', '--find=../baz', '--replace=baz'],
+      { stdio: 'inherit' }
+    )
+    await spawn(
+      'jscodeshift',
+      ['-t', '..', '../temp.js', '--find=../../qux', '--replace=../../QUX'],
+      { stdio: 'inherit' }
+    )
     const result = await fs.readFile('../temp.js', 'utf8')
     expect(result).to.equal(expected)
   })
