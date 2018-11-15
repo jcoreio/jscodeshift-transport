@@ -21,7 +21,7 @@ function findAbsoluteAsyncImports(root, moduleName) {
   })
 }
 
-const isTrueRequire = path => path.scope.getBindings().require == null
+const isTrueRequire = path => path.scope && path.scope.lookup('require') == null
 
 function findAbsoluteRequires(root, moduleName) {
   return root.find(j.CallExpression, {
