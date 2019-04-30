@@ -1,11 +1,35 @@
 const { expect } = require('chai')
 const j = require('jscodeshift').withParser('babylon')
+const generate = require('@babel/generator').default
 const { replaceModuleNames } = require('..')
 const { spawn } = require('promisify-child-process')
 const fs = require('fs-extra')
 const path = require('path')
+const requireGlob = require('require-glob')
 
 process.chdir(__dirname)
+
+const fixtures = requireGlob.sync('./fixtures/*.js')
+
+function normalize(code) {
+  return generate(j(code).nodes()[0]).code
+}
+
+for (let name in fixtures) {
+  it(name, function() {
+    const { input, replacements, output, file: _file } = fixtures[name]
+    const root = j(input)
+    const file = _file
+      ? path.resolve(__dirname, 'fixtures', _file)
+      : path.resolve(__dirname, '../temp.js')
+
+    replacements.forEach(([find, replace]) =>
+      replaceModuleNames(file, root, find, replace)
+    )
+
+    expect(normalize(root.toSource())).to.equal(normalize(output))
+  })
+}
 
 const code = `
 import foo from 'foo'
@@ -43,69 +67,6 @@ function shouldBeUnchanged(require) {
 }
 `
 
-describe(`replaceModuleNames`, function() {
-  it(`works`, function() {
-    const root = j(code)
-
-    const file = path.resolve(__dirname, '../temp.js')
-
-    replaceModuleNames(file, root, 'foo', './foo')
-    replaceModuleNames(file, root, '../baz', 'baz')
-    replaceModuleNames(file, root, '../../qux', s => s.toUpperCase())
-
-    expect(root.toSource()).to.equal(expected)
-  })
-  it(`find function works`, function() {
-    const root = j(code)
-
-    const file = path.resolve(__dirname, '../temp.js')
-
-    replaceModuleNames(file, root, s => /foo|baz/.test(s), s => s.toUpperCase())
-
-    expect(root.toSource()).to.equal(`
-import foo from "FOO"
-const foo = require("FOO")
-import("FOO")
-
-import baz from "./BAZ"
-const baz = require("./BAZ")
-import("./BAZ")
-
-import qux from '../qux'
-const qux = require('../qux')
-import('../qux')
-
-function shouldBeUnchanged(require) {
-  return require('foo')
-}
-`)
-  })
-  it(`find regex works`, function() {
-    const root = j(code)
-
-    const file = path.resolve(__dirname, '../temp.js')
-
-    replaceModuleNames(file, root, /foo|baz/, s => s.toUpperCase())
-
-    expect(root.toSource()).to.equal(`
-import foo from "FOO"
-const foo = require("FOO")
-import("FOO")
-
-import baz from "./BAZ"
-const baz = require("./BAZ")
-import("./BAZ")
-
-import qux from '../qux'
-const qux = require('../qux')
-import('../qux')
-
-function shouldBeUnchanged(require) {
-  return require('foo')
-}
-`)
-  })
-})
 describe(`integration test`, async function() {
   this.timeout(30000)
 
