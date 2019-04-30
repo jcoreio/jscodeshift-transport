@@ -12,7 +12,11 @@ process.chdir(__dirname)
 const fixtures = requireGlob.sync('./fixtures/*.js')
 
 function normalize(code) {
-  return generate(j(code).nodes()[0]).code
+  const root = j(code)
+  root
+    .find(j.StringLiteral)
+    .replaceWith(nodePath => j.stringLiteral(nodePath.node.value))
+  return generate(root.nodes()[0]).code
 }
 
 for (let name in fixtures) {
